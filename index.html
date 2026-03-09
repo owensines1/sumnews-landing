@@ -633,8 +633,22 @@
       <div class="eyebrow">Early Access — 2025</div>
       <h1>A <em>clearer</em> way to follow the news.</h1>
       <p class="hero-sub">SumNews organizes coverage from multiple outlets into structured story briefs so you can quickly understand what actually happened.</p>
-      <form class="signup-form" onsubmit="handleSignup(event)">
-        <input type="email" id="hero-email" placeholder="your@email.com" required autocomplete="email" />
+      <form
+        class="signup-form"
+        action="https://buttondown.email/api/emails/embed-subscribe/sines"
+        method="post"
+        target="popupwindow"
+        onsubmit="window.open('https://buttondown.email/sines', 'popupwindow')"
+      >
+        <input
+          type="email"
+          name="email"
+          id="hero-email"
+          placeholder="your@email.com"
+          required
+          autocomplete="email"
+        />
+        <input type="hidden" name="tag" value="sumnews-waitlist" />
         <button type="submit" class="btn-primary">Request Early Access</button>
       </form>
       <p class="form-note">No spam. No notifications. Just a note when we launch.</p>
@@ -763,10 +777,24 @@
       <p class="section-label">Early access</p>
       <h2>Join the beta waitlist.</h2>
       <p class="sub">We're building SumNews carefully, starting with a small group of early users. If this sounds useful to you, we'd like to hear from you.</p>
-      <form class="signup-form" onsubmit="handleSignup(event)">
-        <input type="email" id="access-email" placeholder="your@email.com" required autocomplete="email" />
-        <button type="submit" class="btn-primary">Request Access</button>
-      </form>
+      <form
+        class="signup-form"
+        action="https://buttondown.email/api/emails/embed-subscribe/sines"
+        method="post"
+        target="popupwindow"
+        onsubmit="window.open('https://buttondown.email/sines', 'popupwindow')"
+        >
+          <input
+            type="email"
+            name="email"
+            id="access-email"
+            placeholder="your@email.com"
+            required
+            autocomplete="email"
+          />
+          <input type="hidden" name="tag" value="sumnews-waitlist" />
+          <button type="submit" class="btn-primary">Request Early Access</button>
+        </form>
       <p class="form-note">We'll be in touch when early access opens.</p>
     </div>
   </section>
@@ -791,28 +819,7 @@
 
     document.querySelectorAll('.fade-up').forEach(el => observer.observe(el));
 
-    // Signup handler
-    function handleSignup(e) {
-      e.preventDefault();
-      const form = e.target;
-      const emailInput = form.querySelector('input[type="email"]');
-      const btn = form.querySelector('button');
-      const email = emailInput.value.trim();
-      if (!email) return;
-
-      btn.textContent = 'You\'re on the list ✓';
-      btn.style.background = '#3d7a5e';
-      btn.disabled = true;
-      emailInput.disabled = true;
-      emailInput.value = '';
-
-      setTimeout(() => {
-        btn.textContent = 'Request Early Access';
-        btn.style.background = '';
-        btn.disabled = false;
-        emailInput.disabled = false;
-      }, 4000);
-    }
+    
   </script>
 </body>
 </html>
