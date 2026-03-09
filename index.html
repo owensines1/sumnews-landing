@@ -1,0 +1,818 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>SumNews — A clearer way to follow the news</title>
+  <link rel="preconnect" href="https://fonts.googleapis.com" />
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+  <link href="https://fonts.googleapis.com/css2?family=Lora:ital,wght@0,400;0,500;0,600;1,400&family=DM+Sans:wght@300;400;500&display=swap" rel="stylesheet" />
+  <style>
+    :root {
+      --ink: #1a1f2e;
+      --ink-soft: #4a5068;
+      --ink-faint: #8892a4;
+      --slate: #2d4a7a;
+      --slate-light: #3d5f99;
+      --slate-pale: #eef2f9;
+      --border: #e2e7ef;
+      --bg: #fafbfc;
+      --white: #ffffff;
+      --accent: #c8d8f0;
+      --serif: 'Lora', Georgia, serif;
+      --sans: 'DM Sans', system-ui, sans-serif;
+    }
+
+    *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+
+    html { scroll-behavior: smooth; }
+
+    body {
+      font-family: var(--sans);
+      background: var(--bg);
+      color: var(--ink);
+      line-height: 1.6;
+      font-size: 16px;
+      -webkit-font-smoothing: antialiased;
+    }
+
+    /* ── NAV ── */
+    nav {
+      position: fixed;
+      top: 0; left: 0; right: 0;
+      z-index: 100;
+      background: rgba(250,251,252,0.93);
+      backdrop-filter: blur(16px);
+      border-bottom: 1px solid var(--border);
+      padding: 0 clamp(1.5rem, 5vw, 5rem);
+      height: 64px;
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+    }
+
+    .nav-left {
+      display: flex;
+      align-items: center;
+    }
+
+    .nav-logo {
+      font-family: var(--serif);
+      font-size: 1.15rem;
+      font-weight: 600;
+      color: var(--ink);
+      letter-spacing: -0.02em;
+      text-decoration: none;
+    }
+
+    .nav-logo span {
+      color: var(--slate);
+    }
+
+    .nav-tagline {
+      font-family: var(--sans);
+      font-size: 0.72rem;
+      font-weight: 300;
+      color: var(--ink-faint);
+      letter-spacing: 0.01em;
+      margin-left: 1rem;
+      padding-left: 1rem;
+      border-left: 1px solid var(--border);
+      display: none;
+    }
+
+    @media (min-width: 600px) {
+      .nav-tagline { display: inline; }
+    }
+
+    .nav-cta {
+      font-size: 0.78rem;
+      font-weight: 500;
+      color: var(--slate);
+      border: 1.5px solid rgba(45,74,122,0.4);
+      padding: 0.45rem 1.1rem;
+      border-radius: 4px;
+      text-decoration: none;
+      transition: background 0.2s, color 0.2s, border-color 0.2s;
+      letter-spacing: 0.03em;
+    }
+
+    .nav-cta:hover {
+      background: var(--slate);
+      border-color: var(--slate);
+      color: var(--white);
+    }
+
+    /* ── LAYOUT ── */
+    .container {
+      max-width: 820px;
+      margin: 0 auto;
+      padding: 0 clamp(1.5rem, 5vw, 3rem);
+    }
+
+    section {
+      padding: clamp(3rem, 6vw, 5.5rem) 0;
+    }
+
+    .divider {
+      border: none;
+      border-top: 1px solid var(--border);
+      margin: 0;
+    }
+
+    /* ── HERO ── */
+    #hero {
+      padding-top: calc(64px + clamp(3.5rem, 7vw, 6rem));
+      padding-bottom: clamp(3.5rem, 7vw, 6rem);
+    }
+
+    .eyebrow {
+      display: inline-flex;
+      align-items: center;
+      gap: 0.5rem;
+      font-size: 0.75rem;
+      font-weight: 500;
+      letter-spacing: 0.1em;
+      text-transform: uppercase;
+      color: var(--slate);
+      margin-bottom: 1.5rem;
+    }
+
+    .eyebrow::before {
+      content: '';
+      display: block;
+      width: 24px;
+      height: 1.5px;
+      background: var(--slate);
+    }
+
+    h1 {
+      font-family: var(--serif);
+      font-size: clamp(2.2rem, 5.5vw, 3.6rem);
+      font-weight: 500;
+      line-height: 1.18;
+      letter-spacing: -0.025em;
+      color: var(--ink);
+      max-width: 680px;
+      margin-bottom: 1.5rem;
+    }
+
+    h1 em {
+      font-style: italic;
+      color: var(--slate);
+    }
+
+    .hero-sub {
+      font-size: clamp(1rem, 2vw, 1.15rem);
+      color: var(--ink-soft);
+      font-weight: 300;
+      max-width: 520px;
+      line-height: 1.7;
+      margin-bottom: 2.5rem;
+    }
+
+    .signup-form {
+      display: flex;
+      gap: 0.6rem;
+      max-width: 440px;
+      flex-wrap: wrap;
+    }
+
+    .signup-form input[type="email"] {
+      flex: 1;
+      min-width: 200px;
+      padding: 0.75rem 1rem;
+      border: 1.5px solid var(--border);
+      border-radius: 6px;
+      font-family: var(--sans);
+      font-size: 0.9rem;
+      background: var(--white);
+      color: var(--ink);
+      outline: none;
+      transition: border-color 0.2s;
+    }
+
+    .signup-form input[type="email"]:focus {
+      border-color: var(--slate-light);
+    }
+
+    .signup-form input[type="email"]::placeholder {
+      color: var(--ink-faint);
+    }
+
+    .btn-primary {
+      padding: 0.75rem 1.4rem;
+      background: var(--slate);
+      color: var(--white);
+      font-family: var(--sans);
+      font-size: 0.875rem;
+      font-weight: 500;
+      border: none;
+      border-radius: 6px;
+      cursor: pointer;
+      transition: background 0.2s, transform 0.1s;
+      white-space: nowrap;
+      letter-spacing: 0.01em;
+    }
+
+    .btn-primary:hover { background: var(--slate-light); }
+    .btn-primary:active { transform: translateY(1px); }
+
+    .form-note {
+      font-size: 0.75rem;
+      color: var(--ink-faint);
+      margin-top: 0.75rem;
+    }
+
+    /* ── HOW IT WORKS ── */
+    .section-label {
+      font-size: 0.72rem;
+      font-weight: 500;
+      letter-spacing: 0.12em;
+      text-transform: uppercase;
+      color: var(--ink-faint);
+      margin-bottom: 1.5rem;
+    }
+
+    h2 {
+      font-family: var(--serif);
+      font-size: clamp(1.6rem, 3.5vw, 2.2rem);
+      font-weight: 500;
+      letter-spacing: -0.02em;
+      color: var(--ink);
+      margin-bottom: 1rem;
+      line-height: 1.25;
+    }
+
+    .steps {
+      display: grid;
+      grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
+      gap: 2.5rem;
+      margin-top: 3rem;
+    }
+
+    .step {
+      position: relative;
+    }
+
+    .step-num {
+      font-family: var(--serif);
+      font-size: 2.8rem;
+      font-weight: 400;
+      color: var(--accent);
+      line-height: 1;
+      margin-bottom: 1rem;
+      display: block;
+    }
+
+    .step h3 {
+      font-family: var(--sans);
+      font-size: 0.95rem;
+      font-weight: 500;
+      color: var(--ink);
+      margin-bottom: 0.5rem;
+    }
+
+    .step p {
+      font-size: 0.9rem;
+      color: var(--ink-soft);
+      line-height: 1.65;
+      font-weight: 300;
+    }
+
+    /* ── WHY ── */
+    #why {
+      background: var(--white);
+    }
+
+    .why-grid {
+      display: grid;
+      grid-template-columns: 1fr 1fr;
+      gap: 4rem;
+      align-items: start;
+      margin-top: 1rem;
+    }
+
+    @media (max-width: 640px) {
+      .why-grid { grid-template-columns: 1fr; gap: 2rem; }
+    }
+
+    .why-text p {
+      font-size: 1rem;
+      color: var(--ink-soft);
+      line-height: 1.8;
+      font-weight: 300;
+      margin-bottom: 1rem;
+    }
+
+    .why-text p:last-child { margin-bottom: 0; }
+
+    .why-text strong {
+      color: var(--ink);
+      font-weight: 500;
+    }
+
+    .stat-stack {
+      display: flex;
+      flex-direction: column;
+      gap: 1.5rem;
+    }
+
+    .stat-card {
+      background: var(--slate-pale);
+      border-radius: 8px;
+      padding: 1.25rem 1.5rem;
+      border-left: 3px solid var(--slate);
+    }
+
+    .stat-card .num {
+      font-family: var(--serif);
+      font-size: 1.8rem;
+      font-weight: 500;
+      color: var(--slate);
+      line-height: 1;
+      margin-bottom: 0.3rem;
+    }
+
+    .stat-card .label {
+      font-size: 0.82rem;
+      color: var(--ink-soft);
+      font-weight: 300;
+    }
+
+    /* ── EXAMPLE CARD ── */
+    #example {
+      background: var(--ink);
+    }
+
+    #example .section-label {
+      color: rgba(255,255,255,0.45);
+    }
+
+    #example h2 {
+      color: rgba(255,255,255,0.92);
+      margin-bottom: 2.5rem;
+    }
+
+    .story-card {
+      background: #222b3e;
+      border-radius: 12px;
+      overflow: hidden;
+      border: 1px solid rgba(255,255,255,0.07);
+      max-width: 680px;
+    }
+
+    .card-header {
+      padding: 1.5rem 1.75rem 1.25rem;
+      border-bottom: 1px solid rgba(255,255,255,0.07);
+    }
+
+    .card-category {
+      font-size: 0.7rem;
+      font-weight: 500;
+      letter-spacing: 0.1em;
+      text-transform: uppercase;
+      color: var(--accent);
+      margin-bottom: 0.75rem;
+    }
+
+    .card-headline {
+      font-family: var(--serif);
+      font-size: clamp(1.1rem, 2.5vw, 1.35rem);
+      font-weight: 500;
+      color: rgba(255,255,255,0.95);
+      line-height: 1.35;
+      letter-spacing: -0.015em;
+    }
+
+    .card-meta {
+      display: flex;
+      align-items: center;
+      gap: 1.25rem;
+      margin-top: 1rem;
+      flex-wrap: wrap;
+    }
+
+    .card-meta-item {
+      display: flex;
+      align-items: center;
+      gap: 0.4rem;
+      font-size: 0.78rem;
+      color: rgba(255,255,255,0.58);
+    }
+
+    .card-meta-item .dot {
+      width: 6px;
+      height: 6px;
+      border-radius: 50%;
+      background: var(--accent);
+      opacity: 0.6;
+      flex-shrink: 0;
+    }
+
+    .card-body {
+      padding: 1.5rem 1.75rem;
+    }
+
+    .card-summary-label {
+      font-size: 0.68rem;
+      font-weight: 500;
+      letter-spacing: 0.1em;
+      text-transform: uppercase;
+      color: rgba(255,255,255,0.42);
+      margin-bottom: 0.75rem;
+    }
+
+    .card-summary {
+      font-size: 0.92rem;
+      color: rgba(255,255,255,0.78);
+      line-height: 1.75;
+      font-weight: 300;
+      margin-bottom: 1.75rem;
+    }
+
+    .card-facts-label {
+      font-size: 0.68rem;
+      font-weight: 500;
+      letter-spacing: 0.1em;
+      text-transform: uppercase;
+      color: rgba(255,255,255,0.42);
+      margin-bottom: 0.75rem;
+    }
+
+    .card-facts {
+      list-style: none;
+      display: flex;
+      flex-direction: column;
+      gap: 0.5rem;
+      margin-bottom: 1.75rem;
+    }
+
+    .card-facts li {
+      font-size: 0.87rem;
+      color: rgba(255,255,255,0.72);
+      display: flex;
+      align-items: baseline;
+      gap: 0.6rem;
+      line-height: 1.5;
+    }
+
+    .card-facts li::before {
+      content: '—';
+      color: var(--accent);
+      opacity: 0.65;
+      flex-shrink: 0;
+      font-size: 0.75rem;
+    }
+
+    .card-sources {
+      border-top: 1px solid rgba(255,255,255,0.08);
+      padding-top: 1.25rem;
+    }
+
+    .card-sources-label {
+      font-size: 0.68rem;
+      font-weight: 500;
+      letter-spacing: 0.1em;
+      text-transform: uppercase;
+      color: rgba(255,255,255,0.42);
+      margin-bottom: 0.75rem;
+    }
+
+    .source-pills {
+      display: flex;
+      flex-wrap: wrap;
+      gap: 0.45rem;
+    }
+
+    .source-pill {
+      font-size: 0.75rem;
+      color: rgba(255,255,255,0.62);
+      background: rgba(255,255,255,0.07);
+      border: 1px solid rgba(255,255,255,0.11);
+      padding: 0.25rem 0.7rem;
+      border-radius: 20px;
+    }
+
+    .card-note {
+      margin-top: 1.25rem;
+      font-size: 0.78rem;
+      color: rgba(255,255,255,0.25);
+      font-style: italic;
+    }
+
+    /* ── MISSION ── */
+    #mission {
+      background: var(--white);
+    }
+
+    .mission-inner {
+      max-width: 640px;
+    }
+
+    .mission-quote {
+      font-family: var(--serif);
+      font-size: clamp(1.25rem, 2.8vw, 1.65rem);
+      font-weight: 400;
+      line-height: 1.55;
+      color: var(--ink);
+      letter-spacing: -0.015em;
+      margin-bottom: 2rem;
+      border-left: 3px solid var(--slate);
+      padding-left: 1.75rem;
+    }
+
+    .mission-quote em {
+      font-style: italic;
+      color: var(--slate);
+    }
+
+    .mission-body {
+      font-size: 0.95rem;
+      color: var(--ink-soft);
+      line-height: 1.8;
+      font-weight: 300;
+      padding-left: 1.75rem;
+    }
+
+    /* ── EARLY ACCESS ── */
+    #access {
+      background: var(--slate-pale);
+      text-align: center;
+    }
+
+    #access .container {
+      max-width: 540px;
+    }
+
+    #access h2 {
+      margin-bottom: 0.75rem;
+    }
+
+    #access .sub {
+      font-size: 0.95rem;
+      color: var(--ink-soft);
+      font-weight: 300;
+      line-height: 1.7;
+      margin-bottom: 2rem;
+    }
+
+    #access .signup-form {
+      margin: 0 auto;
+      justify-content: center;
+    }
+
+    #access .form-note {
+      text-align: center;
+    }
+
+    /* ── FOOTER ── */
+    footer {
+      padding: 2rem 0;
+      border-top: 1px solid var(--border);
+    }
+
+    footer .container {
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      flex-wrap: wrap;
+      gap: 1rem;
+    }
+
+    .footer-logo {
+      font-family: var(--serif);
+      font-size: 1rem;
+      font-weight: 600;
+      color: var(--ink);
+      text-decoration: none;
+    }
+
+    .footer-logo span { color: var(--slate); }
+
+    .footer-note {
+      font-size: 0.78rem;
+      color: var(--ink-faint);
+    }
+
+    /* ── ANIMATIONS ── */
+    .fade-up {
+      opacity: 0;
+      transform: translateY(18px);
+      transition: opacity 0.7s ease, transform 0.7s ease;
+    }
+
+    .fade-up.visible {
+      opacity: 1;
+      transform: translateY(0);
+    }
+
+    .fade-up:nth-child(2) { transition-delay: 0.1s; }
+    .fade-up:nth-child(3) { transition-delay: 0.2s; }
+
+    @media (max-width: 480px) {
+      .signup-form { flex-direction: column; }
+      .signup-form input[type="email"] { min-width: unset; }
+    }
+  </style>
+</head>
+<body>
+
+  <!-- NAV -->
+  <nav>
+    <div class="nav-left">
+      <a class="nav-logo" href="#"><span>Sum</span>News</a>
+      <span class="nav-tagline">Story-first news intelligence</span>
+    </div>
+    <a class="nav-cta" href="#access">Request Access</a>
+  </nav>
+
+  <!-- HERO -->
+  <section id="hero">
+    <div class="container">
+      <div class="eyebrow">Early Access — 2025</div>
+      <h1>A <em>clearer</em> way to follow the news.</h1>
+      <p class="hero-sub">SumNews organizes coverage from multiple outlets into structured story briefs so you can quickly understand what actually happened.</p>
+      <form class="signup-form" onsubmit="handleSignup(event)">
+        <input type="email" id="hero-email" placeholder="your@email.com" required autocomplete="email" />
+        <button type="submit" class="btn-primary">Request Early Access</button>
+      </form>
+      <p class="form-note">No spam. No notifications. Just a note when we launch.</p>
+    </div>
+  </section>
+
+  <hr class="divider" />
+
+  <!-- HOW IT WORKS -->
+  <section id="how">
+    <div class="container">
+      <p class="section-label">How it works</p>
+      <h2>From scattered headlines<br>to a single, structured story.</h2>
+      <div class="steps">
+        <div class="step fade-up">
+          <span class="step-num">01</span>
+          <h3>Stories are detected across outlets</h3>
+          <p>SumNews continuously monitors coverage from dozens of sources, identifying when the same event is being reported.</p>
+        </div>
+        <div class="step fade-up">
+          <span class="step-num">02</span>
+          <h3>Coverage is grouped into one story</h3>
+          <p>Articles from different outlets are clustered together — not by headline similarity, but by the underlying event they describe.</p>
+        </div>
+        <div class="step fade-up">
+          <span class="step-num">03</span>
+          <h3>A neutral brief summarizes what's known</h3>
+          <p>Key facts are extracted and organized. You see what is confirmed, how many sources agree, and where coverage is still developing.</p>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <hr class="divider" />
+
+  <!-- WHY -->
+  <section id="why">
+    <div class="container">
+      <p class="section-label">Why SumNews exists</p>
+      <div class="why-grid">
+        <div class="why-text">
+          <h2>The feed is broken.<br>Stories aren't.</h2>
+          <p>Modern news consumption is fragmented by design. Algorithms reward engagement, not understanding. <strong>You see dozens of headlines about the same story, each framed differently, with no clear picture of what's actually true.</strong></p>
+          <p>SumNews is built on the belief that the right unit of news isn't a headline — it's a story. When you understand the story, you understand the news.</p>
+          <p>We focus on <strong>breadth, neutrality, and structure</strong>: showing you how widely a story is covered, presenting the facts without spin, and making it easy to go deeper when you want to.</p>
+        </div>
+        <div class="stat-stack">
+          <div class="stat-card fade-up">
+            <div class="num">12–40×</div>
+            <div class="label">The number of outlets that often cover a single major story — usually saying the same thing differently.</div>
+          </div>
+          <div class="stat-card fade-up">
+            <div class="num">1 brief</div>
+            <div class="label">What SumNews distills that coverage into — structured, sourced, and ready to read in under two minutes.</div>
+          </div>
+          <div class="stat-card fade-up">
+            <div class="num">0 agenda</div>
+            <div class="label">Our summaries are generated from the coverage itself, not shaped by editorial opinion.</div>
+          </div>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <!-- EXAMPLE CARD -->
+  <section id="example">
+    <div class="container">
+      <p class="section-label">Example story brief</p>
+      <h2>This is what a SumNews story looks like.</h2>
+      <div class="story-card fade-up">
+        <div class="card-header">
+          <div class="card-category">International · Economics</div>
+          <div class="card-headline">Central banks in Europe and the US signal diverging paths on interest rate policy</div>
+          <div class="card-meta">
+            <div class="card-meta-item"><span class="dot"></span>14 sources covering this story</div>
+            <div class="card-meta-item"><span class="dot"></span>Updated 2 hours ago</div>
+          </div>
+        </div>
+        <div class="card-body">
+          <div class="card-summary-label">Neutral Summary</div>
+          <p class="card-summary">The European Central Bank has signaled it may lower rates within the next two quarters amid slowing growth in the eurozone, while Federal Reserve officials have indicated they intend to hold rates steady until inflation falls closer to the 2% target. The divergence reflects differing economic conditions on each side of the Atlantic and is expected to influence currency markets in the near term.</p>
+
+          <div class="card-facts-label">Key Facts</div>
+          <ul class="card-facts">
+            <li>ECB president confirmed rate cuts are "actively under discussion" at the next policy meeting.</li>
+            <li>US CPI came in at 3.4% for the most recent reporting month, above the Fed's target.</li>
+            <li>The euro fell 0.6% against the dollar following the ECB statement.</li>
+            <li>Analysts at three major banks revised their eurozone growth forecasts downward.</li>
+          </ul>
+
+          <div class="card-sources">
+            <div class="card-sources-label">Covered by</div>
+            <div class="source-pills">
+              <span class="source-pill">Reuters</span>
+              <span class="source-pill">Financial Times</span>
+              <span class="source-pill">Bloomberg</span>
+              <span class="source-pill">The Guardian</span>
+              <span class="source-pill">AP News</span>
+              <span class="source-pill">WSJ</span>
+              <span class="source-pill">Le Monde</span>
+              <span class="source-pill">+7 more</span>
+            </div>
+          </div>
+          <p class="card-note">This is a static illustration. Actual story briefs are generated from live coverage.</p>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <!-- MISSION -->
+  <section id="mission">
+    <div class="container">
+      <div class="mission-inner">
+        <p class="section-label">Our mission</p>
+        <blockquote class="mission-quote">
+          "SumNews is built around a simple idea: <em>the news should help people understand the world, not divide their understanding of it.</em>"
+        </blockquote>
+        <p class="mission-body">We're not trying to replace journalism. We're trying to make it easier to consume — without distortion, without noise, and without asking you to read fourteen articles to understand one event. A more informed public starts with a more legible news environment.</p>
+      </div>
+    </div>
+  </section>
+
+  <!-- EARLY ACCESS -->
+  <section id="access">
+    <div class="container">
+      <p class="section-label">Early access</p>
+      <h2>Join the beta waitlist.</h2>
+      <p class="sub">We're building SumNews carefully, starting with a small group of early users. If this sounds useful to you, we'd like to hear from you.</p>
+      <form class="signup-form" onsubmit="handleSignup(event)">
+        <input type="email" id="access-email" placeholder="your@email.com" required autocomplete="email" />
+        <button type="submit" class="btn-primary">Request Access</button>
+      </form>
+      <p class="form-note">We'll be in touch when early access opens.</p>
+    </div>
+  </section>
+
+  <!-- FOOTER -->
+  <footer>
+    <div class="container">
+      <a class="footer-logo" href="#"><span>Sum</span>News</a>
+      <p class="footer-note">© 2025 SumNews. Currently in development.</p>
+    </div>
+  </footer>
+
+  <script>
+    // Fade-up scroll animation
+    const observer = new IntersectionObserver((entries) => {
+      entries.forEach(e => {
+        if (e.isIntersecting) {
+          e.target.classList.add('visible');
+        }
+      });
+    }, { threshold: 0.12 });
+
+    document.querySelectorAll('.fade-up').forEach(el => observer.observe(el));
+
+    // Signup handler
+    function handleSignup(e) {
+      e.preventDefault();
+      const form = e.target;
+      const emailInput = form.querySelector('input[type="email"]');
+      const btn = form.querySelector('button');
+      const email = emailInput.value.trim();
+      if (!email) return;
+
+      btn.textContent = 'You\'re on the list ✓';
+      btn.style.background = '#3d7a5e';
+      btn.disabled = true;
+      emailInput.disabled = true;
+      emailInput.value = '';
+
+      setTimeout(() => {
+        btn.textContent = 'Request Early Access';
+        btn.style.background = '';
+        btn.disabled = false;
+        emailInput.disabled = false;
+      }, 4000);
+    }
+  </script>
+</body>
+</html>
